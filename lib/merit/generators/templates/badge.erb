@@ -1,0 +1,41 @@
+class Merit::Badge < ApplicationRecord
+  self.table_name = "merit_badges"
+
+  validates_presence_of :id, :name
+  validates_uniqueness_of :id
+
+  def self.find_by_id(ids)
+    ids = Array.wrap(ids)
+    find { |b| ids.include? b[:id] }
+  end
+
+  def self.by_name(name)
+    find { |b| b.name.to_s == name.to_s }
+  end
+
+  def self.by_level(level)
+    find { |b| b.level.to_s == level.to_s }
+  end
+  
+  class << self
+    def find_by_name_and_level(name, level)
+      badge = Merit::Badge.by_name(name)
+      badge = badge.by_level(level) unless level.nil?
+      if badge.nil?
+        str = "No badge '#{name}' found. Define it in initializers/merit.rb"
+        fail ::Merit::BadgeNotFound, str
+      end
+      badge
+    end
+
+    # Defines Badge#meritable_models method, to get related
+    # entries with certain badge. For instance, Badge.find(3).users
+    # orm-specified
+    def _define_related_entries_method(meritable_class_name)
+      define_method(:"#{meritable_class_name.underscore.pluralize}") do
+        sashes = BadgesSash.where(badge_id: id).pluck(:sash_id)
+        meritable_class_name.constantize.where(sash_id: sashes)
+      end
+    end
+  end
+end

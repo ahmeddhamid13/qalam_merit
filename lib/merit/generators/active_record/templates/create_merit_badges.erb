@@ -1,0 +1,12 @@
+class CreateMeritBadges < ActiveRecord::Migration<%= migration_version %>
+  def change
+    create_table :merit_badges do |t|
+      t.string :name
+      t.integer :level
+      t.text :description
+      t.string :difficulty
+
+      t.timestamps
+    end
+  end
+end
