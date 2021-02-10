@@ -34,7 +34,7 @@ and Rankings.
 
 # Installation
 
-1. Add `gem 'merit'` to your `Gemfile`
+1. Add `gem 'qalam_merit', require: 'merit'` to your `Gemfile`
 2. Run `rails g merit:install`. This creates several migrations.
 3. Run `rails g merit MODEL_NAME` (e.g. `user`). This creates a migration and adds `has_merit` to MODEL_NAME.
 4. Run `rake db:migrate`
