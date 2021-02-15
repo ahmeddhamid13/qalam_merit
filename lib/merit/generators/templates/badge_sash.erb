@@ -1,0 +1,21 @@
+### QALAM_MERIT ###
+class Merit::BadgeSash < ApplicationRecord
+    self.table_name = "badges_sashes"
+    belongs_to :badge, foreign_key: "badge_id", class_name: 'Merit::Badge'
+    belongs_to :sash, foreign_key: "sash_id", class_name: 'Merit::Sash'
+    # has_many :users, through: :sash, source: :users
+
+    class << self
+        def user(badge_sash_id = nil)
+            return [] unless badge_sash_id
+
+            return [] unless badge_sash = Merit::BadgeSash.find(badge_sash_id)
+            sash = badge_sash.sash
+
+            return [] unless sash && sash.id && sash_id = sash.id
+
+            User.where(sash_id: sash_id)
+        end
+    end
+end
+  

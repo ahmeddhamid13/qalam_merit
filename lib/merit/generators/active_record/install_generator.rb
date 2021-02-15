@@ -13,23 +13,23 @@ module Merit
       end
 
       def copy_migrations_and_model
-        migration_template 'create_merit_badges.erb',
-        'db/migrate/create_merit_badges.rb'
-
         migration_template 'create_merit_actions.erb',
-                           'db/migrate/create_merit_actions.rb'
-
+                            'db/migrate/create_merit_actions.rb'
+        sleep 1
         migration_template 'create_merit_activity_logs.erb',
-                           'db/migrate/create_merit_activity_logs.rb'
-
+                            'db/migrate/create_merit_activity_logs.rb'
+        sleep 1
+        migration_template 'create_merit_badges.erb',
+                            'db/migrate/create_merit_badges.rb'
+        sleep 1
         migration_template 'create_sashes.erb',
-                           'db/migrate/create_sashes.rb'
-
+                            'db/migrate/create_sashes.rb'
+        sleep 1
         migration_template 'create_badges_sashes.erb',
                            'db/migrate/create_badges_sashes.rb'
-
+        sleep 1
         migration_template 'create_scores_and_points.erb',
-                           'db/migrate/create_scores_and_points.rb'
+                            'db/migrate/create_scores_and_points.rb'
       end
 
       def migration_version

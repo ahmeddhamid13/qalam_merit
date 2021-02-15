@@ -1,0 +1,15 @@
+### QALAM_MERIT ###
+class Merit::Sash < ApplicationRecord
+    self.table_name = "sashes"
+    has_many :badges_sashes, class_name: 'Merit::BadgeSash'
+    has_many :badges, through: :badges_sashes, source: :badge
+
+    class << self
+        def user(sash_id = nil)
+            return [] unless sash_id
+
+            User.where(sash_id: sash_id)
+        end
+    end
+end
+  

@@ -1,10 +1,15 @@
+### QALAM_MERIT ###
 class CreateMeritBadges < ActiveRecord::Migration<%= migration_version %>
   def change
     create_table :merit_badges do |t|
       t.string :name
-      t.integer :level
+      t.integer :level, default: 1
+      t.integer :points, default: 0
       t.text :description
       t.string :difficulty
+      t.references :user, limit: 8, foreign_key: true, index: true, null: true
+      t.references :root_account, foreign_key: { to_table: 'accounts'}, limit: 8, null: false, index: true
+
 
       t.timestamps
     end

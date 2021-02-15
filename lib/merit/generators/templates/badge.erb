@@ -1,23 +1,31 @@
+### QALAM_MERIT ###
 class Merit::Badge < ApplicationRecord
   self.table_name = "merit_badges"
 
-  validates_presence_of :id, :name
-  validates_uniqueness_of :id
+  validates :name, presence: true, length: { minimum: 3 }
+  validates :points, numericality: true, :inclusion => 1..20
+  validates :description, presence: false, length: { maximum: 50 }
 
-  def self.find_by_id(ids)
-    ids = Array.wrap(ids)
-    find { |b| ids.include? b[:id] }
-  end
+  has_one :image, :class_name => 'Attachment', :as => :context, :inverse_of => :context, :dependent => :destroy
+  belongs_to :root_account, foreign_key: "root_account_id", class_name: 'Account'
+  belongs_to :created_by, foreign_key: "user_id", class_name: 'User'
+  has_many :badges_sashes, class_name: 'Merit::BadgeSash'
+  has_many :sashes, through: :badges_sashes, source: :sash
 
-  def self.by_name(name)
-    find { |b| b.name.to_s == name.to_s }
-  end
-
-  def self.by_level(level)
-    find { |b| b.level.to_s == level.to_s }
-  end
-  
   class << self
+    def find_by_id(ids)
+      ids = Array.wrap(ids)
+      find { |b| ids.include? b[:id] }
+    end
+  
+    def by_name(name)
+      find { |b| b.name.to_s == name.to_s }
+    end
+  
+    def by_level(level)
+      find { |b| b.level.to_s == level.to_s }
+    end
+
     def find_by_name_and_level(name, level)
       badge = Merit::Badge.by_name(name)
       badge = badge.by_level(level) unless level.nil?
@@ -33,7 +41,7 @@ class Merit::Badge < ApplicationRecord
     # orm-specified
     def _define_related_entries_method(meritable_class_name)
       define_method(:"#{meritable_class_name.underscore.pluralize}") do
-        sashes = BadgesSash.where(badge_id: id).pluck(:sash_id)
+        sashes = Merit::BadgeSash.where(badge_id: id).pluck(:sash_id)
         meritable_class_name.constantize.where(sash_id: sashes)
       end
     end

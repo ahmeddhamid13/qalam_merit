@@ -1,13 +1,11 @@
+### QALAM_MERIT ###
 class CreateBadgesSashes < ActiveRecord::Migration<%= migration_version %>
   def self.up
     create_table :badges_sashes do |t|
-      t.integer :badge_id, :sash_id
-      t.boolean :notified_user, default: false
+      t.references :badge, limit: 8, foreign_key: { to_table: 'merit_badges'}, index: true, null: true
+      t.references :sash, limit: 8, foreign_key: true, index: true, null: true
       t.datetime :created_at
     end
-    add_index :badges_sashes, [:badge_id, :sash_id]
-    add_index :badges_sashes, :badge_id
-    add_index :badges_sashes, :sash_id
   end
 
   def self.down
