@@ -1,7 +1,7 @@
 ### QALAM_MERIT ###
-class Merit::Sash < ApplicationRecord
+class Merit::QalamSash < ActiveRecord::Base
     self.table_name = "sashes"
-    has_many :badges_sashes, class_name: 'Merit::BadgeSash'
+    has_many :badges_sashes, class_name: 'Merit::QalamBadgeSash'
     has_many :badges, through: :badges_sashes, source: :badge
 
     class << self
@@ -12,4 +12,3 @@ class Merit::Sash < ApplicationRecord
         end
     end
 end
-  

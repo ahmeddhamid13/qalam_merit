@@ -9,11 +9,11 @@ module Merit
       def copy_migrations_and_model
         template 'merit.erb', 'config/initializers/merit.rb'
         sleep 1.1
-        template 'sash.erb', 'app/models/merit/sash.rb'
+        template 'qalam_sash.erb', 'app/models/merit/qalam_sash.rb'
         sleep 1.1
         template 'badge.erb', 'app/models/merit/badge.rb'
         sleep 1.1
-        template 'badge_sash.erb', 'app/models/merit/badge_sash.rb'
+        template 'qalam_badge_sash.erb', 'app/models/merit/qalam_badge_sash.rb'
         sleep 1.1
         template 'merit_badge_rules.erb', 'app/models/merit/badge_rules.rb'
         sleep 1.1

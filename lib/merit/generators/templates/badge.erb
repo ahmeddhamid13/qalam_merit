@@ -1,27 +1,38 @@
 ### QALAM_MERIT ###
-class Merit::Badge < ApplicationRecord
+class Merit::Badge < ActiveRecord::Base
   self.table_name = "merit_badges"
 
-  validates :name, presence: true, length: { minimum: 3 }
-  validates :points, numericality: true, :inclusion => 1..20
+  before_validation :strip_whitespace
+  def strip_whitespace
+    self.name = self.name.strip unless self.name.nil?
+    self.description = self.description.strip unless self.description.nil?
+  end
+
+  validates :root_account_id, presence: true
+  validates :name, presence: true, length: { minimum: 3, maximum: 10 }
+  validates :points, presence: true, numericality: true, :inclusion => 1..100
   validates :description, presence: false, length: { maximum: 50 }
 
   has_one :image, :class_name => 'Attachment', :as => :context, :inverse_of => :context, :dependent => :destroy
   belongs_to :root_account, foreign_key: "root_account_id", class_name: 'Account'
   belongs_to :created_by, foreign_key: "user_id", class_name: 'User'
-  has_many :badges_sashes, class_name: 'Merit::BadgeSash'
+  has_many :badges_sashes, class_name: 'Merit::QalamBadgeSash'
   has_many :sashes, through: :badges_sashes, source: :sash
+
+  def image_url
+    # self.image.public_url if self.image
+  end
 
   class << self
     def find_by_id(ids)
       ids = Array.wrap(ids)
       find { |b| ids.include? b[:id] }
     end
-  
+
     def by_name(name)
       find { |b| b.name.to_s == name.to_s }
     end
-  
+
     def by_level(level)
       find { |b| b.level.to_s == level.to_s }
     end
@@ -41,8 +52,17 @@ class Merit::Badge < ApplicationRecord
     # orm-specified
     def _define_related_entries_method(meritable_class_name)
       define_method(:"#{meritable_class_name.underscore.pluralize}") do
-        sashes = Merit::BadgeSash.where(badge_id: id).pluck(:sash_id)
+        sashes = Merit::QalamBadgeSash.where(badge_id: id).pluck(:sash_id)
         meritable_class_name.constantize.where(sash_id: sashes)
+      end
+    end
+
+    def create_with_attachment(account, badge, attachment)
+      account.shard.activate do
+        att = Attachment.create_data_attachment(badge, attachment)
+        badge.image = att
+        badge.save!
+        badge
       end
     end
   end
