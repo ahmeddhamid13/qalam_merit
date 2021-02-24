@@ -11,7 +11,7 @@ module Merit::Models::ActiveRecord
 
     has_many :badges_sashes, dependent: :destroy
     has_many :badges, through: :badges_sashes, source: :badge
-    has_many :scores, dependent: :destroy, class_name: 'Merit::Score'
+    has_many :scores, dependent: :destroy, class_name: 'Merit::MeritScore'
 
     after_create :create_scores
 
@@ -20,7 +20,7 @@ module Merit::Models::ActiveRecord
     # @param category [String] The category
     # @return [ActiveRecord::Relation] containing the points
     def score_points(options = {})
-      scope = Merit::Score::Point
+      scope = Merit::MeritScore::Point
                 .joins(:score)
                 .where('merit_scores.sash_id = ?', id)
       if (category = options[:category])

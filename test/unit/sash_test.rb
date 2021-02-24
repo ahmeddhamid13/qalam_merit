@@ -10,7 +10,7 @@ class SashTest < ActiveSupport::TestCase
     describe "when category specified" do
       it "should create a new Point with specified category" do
         @sash.add_points 5, category: @custom_category
-        score = Merit::Score.last
+        score = Merit::MeritScore.last
         point = score.score_points.last
 
         assert_equal point.num_points, 5
@@ -19,10 +19,10 @@ class SashTest < ActiveSupport::TestCase
     end
 
     it "should create a new Point in category default with specified number of points" do
-      assert_difference("Merit::Score::Point.count", 1) do
+      assert_difference("Merit::MeritScore::Point.count", 1) do
         @sash.add_points 5
       end
-      score = Merit::Score.last
+      score = Merit::MeritScore.last
       point = score.score_points.last
 
       assert_equal point.num_points, 5
@@ -34,7 +34,7 @@ class SashTest < ActiveSupport::TestCase
     describe "when category specified" do
       it "should create a new Point with specified category" do
         @sash.subtract_points 5, category: @custom_category
-        score = Merit::Score.last
+        score = Merit::MeritScore.last
         point = score.score_points.last
 
         assert_equal point.num_points, -5
@@ -43,10 +43,10 @@ class SashTest < ActiveSupport::TestCase
     end
 
     it "should create a new Point in category default with inverse of specified number of points" do
-      assert_difference("Merit::Score::Point.count", 1) do
+      assert_difference("Merit::MeritScore::Point.count", 1) do
         @sash.subtract_points 5
       end
-      score = Merit::Score.last
+      score = Merit::MeritScore.last
       point = score.score_points.last
 
       assert_equal point.num_points, -5
