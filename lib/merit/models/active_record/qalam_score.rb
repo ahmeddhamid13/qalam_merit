@@ -1,10 +1,10 @@
 module Merit::Models::ActiveRecord
-  class MeritScore < ActiveRecord::Base
+  class QalamScore < ActiveRecord::Base
     self.table_name = :merit_scores
     belongs_to :sash
     has_many :score_points,
              dependent: :destroy,
-             class_name: 'Merit::MeritScore::Point'
+             class_name: 'Merit::QalamScore::Point'
 
     def points
       score_points.group(:score_id).sum(:num_points).values.first || 0
@@ -21,5 +21,5 @@ module Merit::Models::ActiveRecord
   end
 end
 
-class Merit::MeritScore < Merit::Models::ActiveRecord::Score; end
-class Merit::MeritScore::Point < Merit::Models::ActiveRecord::Score::Point; end
+class Merit::QalamScore < Merit::Models::ActiveRecord::QalamScore; end
+class Merit::QalamScore::Point < Merit::Models::ActiveRecord::QalamScore::Point; end

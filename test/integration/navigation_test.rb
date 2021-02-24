@@ -107,12 +107,12 @@ class NavigationTest < ActionDispatch::IntegrationTest
     assert user.badges.empty?, 'Should not have badges'
 
     assert_equal 0, user.points
-    assert_equal 0, Merit::MeritScore::Point.count
+    assert_equal 0, Merit::QalamScore::Point.count
     user.add_points 15
     assert_equal 15, user.points
     user.subtract_points 15
     assert_equal 0, user.points
-    assert_equal 2, Merit::MeritScore::Point.count
+    assert_equal 2, Merit::QalamScore::Point.count
 
     # Tenth comment with errors doesn't change reputation
     badges = user.reload.badges
