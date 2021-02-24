@@ -7,8 +7,10 @@ module Merit::Models::ActiveRecord
   # unnecessary. It should be transparent at the application.
   class Sash < ActiveRecord::Base
     include Merit::Models::SashConcern
+    self.table_name = "sashes"
 
     has_many :badges_sashes, dependent: :destroy
+    has_many :badges, through: :badges_sashes, source: :badge
     has_many :scores, dependent: :destroy, class_name: 'Merit::Score'
 
     after_create :create_scores
