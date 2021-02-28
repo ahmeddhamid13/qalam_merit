@@ -1,6 +1,6 @@
 require 'test_helper'
 
-describe Merit::Score do
+describe Merit::QalamScore do
   it 'Point#sash_id delegates to Score' do
     score = Merit::QalamScore.new
     score.sash_id = 33
