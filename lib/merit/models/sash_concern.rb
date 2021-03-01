@@ -8,16 +8,27 @@ module Merit::Models
       badges_sashes.map(&:badge_id)
     end
 
-    def add_badge(badge_id)
-      bs = Merit::BadgesSash.new(badge_id: badge_id.to_i)
-      badges_sashes << bs
-      bs
+    def add_badge(badge_id, options = {})
+      if (course_id = options[:course_id])
+        bs = Merit::BadgesSash.new(badge_id: badge_id.to_i, course_id: course_id.to_i)
+      else
+        bs = Merit::BadgesSash.new(badge_id: badge_id.to_i)
+      end
+        badges_sashes << bs
+        bs
     end
 
     def rm_badge(badge_id)
       badges_sashes.where(badge_id: badge_id.to_i).first.try(:destroy)
     end
 
+    ########################QALAM_DEV#########################
+    def add_qalam_badge(badge_id, course_id)
+      bs = Merit::BadgesSash.new(badge_id: badge_id.to_i, course_id: course_id.to_i)
+      badges_sashes << bs
+      bs
+    end
+    ########################END###################################
     # Retrieve the number of points from a category
     # By default all points are summed up
     # @param category [String] The category

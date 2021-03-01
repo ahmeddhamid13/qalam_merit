@@ -6,6 +6,7 @@ module Merit::Models::ActiveRecord
     has_many :activity_logs,
              class_name: 'Merit::ActivityLog',
              as: :related_change
+    belongs_to :course, foreign_key: "course_id", class_name: 'Course'
 
     validates_presence_of :badge_id, :sash
   end
