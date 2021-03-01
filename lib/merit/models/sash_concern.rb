@@ -18,8 +18,12 @@ module Merit::Models
         bs
     end
 
-    def rm_badge(badge_id)
-      badges_sashes.where(badge_id: badge_id.to_i).first.try(:destroy)
+    def rm_badge(badge_id, options = {})
+      if (course_id = options[:course_id])
+        badges_sashes.where(badge_id: badge_id.to_i, course_id: course_id.to_i).first.try(:destroy)
+      else
+        badges_sashes.where(badge_id: badge_id.to_i).first.try(:destroy)
+      end
     end
 
     ########################QALAM_DEV#########################
