@@ -8,8 +8,10 @@ module Merit
       def inject_merit_content
         if model_exists?
           inject_into_class(model_path, class_name, "  ### END ###\n\n")
-          inject_into_class(model_path, class_name, "  has_many :created_badges, class_name: 'Merit::Badge'\n")
-          inject_into_class(model_path, class_name, "  belongs_to :sash, foreign_key: 'sash_id', class_name: 'Merit::Sash'\n")
+          inject_into_class(model_path, class_name, "  has_many :created_badges, class_name: 'Merit::Badge', :dependent => :destroy\n")
+          inject_into_class(model_path, class_name, "  has_many :assigned_badges, through: :sash, source: :badges, :dependent => :destroy\n")
+          inject_into_class(model_path, class_name, "  has_many :badges_sashes, through: :sash, source: :badges_sashes, :dependent => :destroy\n")
+          inject_into_class(model_path, class_name, "  belongs_to :sash, foreign_key: 'sash_id', class_name: 'Merit::Sash', :dependent => :destroy\n")
           inject_into_class(model_path, class_name, "  has_merit\n")
           inject_into_class(model_path, class_name, "  ### QALAM_MERIT ###\n")
         end
