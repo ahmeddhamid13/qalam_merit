@@ -1,6 +1,9 @@
 ### QALAM_MERIT ###
 class Merit::Badge < ActiveRecord::Base
+  # include Workflow
+  # include Context
   self.table_name = "merit_badges"
+  @valid_images = ["image/jpeg", "image/png", "image/bmp", "image/jpg"]
 
   before_validation :strip_whitespace
   def strip_whitespace
@@ -8,19 +11,27 @@ class Merit::Badge < ActiveRecord::Base
     self.description = self.description.strip unless self.description.nil?
   end
 
-  validates :root_account_id, presence: true
-  validates :name, presence: true, length: { minimum: 3, maximum: 10 }
+  validates :name, presence: true, length: { minimum: 3, maximum: 20 }
   validates :points, presence: true, numericality: true, :inclusion => 1..100
-  validates :description, presence: false, length: { maximum: 50 }
+  validates :description, presence: true, length: { minimum: 3, maximum: 50 }
 
   has_one :image, :class_name => 'Attachment', :as => :context, :inverse_of => :context, :dependent => :destroy
-  belongs_to :root_account, foreign_key: "root_account_id", class_name: 'Account'
   belongs_to :created_by, foreign_key: "user_id", class_name: 'User'
-  has_many :badges_sashes, class_name: 'Merit::QalamBadgeSash'
-  has_many :sashes, through: :badges_sashes, source: :sash
 
   def image_url
-    # self.image.public_url if self.image
+    if self.image
+      return self.image.public_url
+    else
+      return '/images/apple-touch-icon.png' 
+    end
+  end
+
+  def self.valid_images
+    @valid_images
+  end
+
+  def badges_sashes
+    Merit::BadgesSash.where(badge_id: self.id)
   end
 
   class << self
@@ -47,9 +58,6 @@ class Merit::Badge < ActiveRecord::Base
       badge
     end
 
-    # Defines Badge#meritable_models method, to get related
-    # entries with certain badge. For instance, Badge.find(3).users
-    # orm-specified
     def _define_related_entries_method(meritable_class_name)
       define_method(:"#{meritable_class_name.underscore.pluralize}") do
         sashes = Merit::QalamBadgeSash.where(badge_id: id).pluck(:sash_id)
@@ -58,11 +66,19 @@ class Merit::Badge < ActiveRecord::Base
     end
 
     def create_with_attachment(account, badge, attachment)
-      account.shard.activate do
-        att = Attachment.create_data_attachment(badge, attachment)
-        badge.image = att
-        badge.save!
-        badge
+      return true if ((attachment.nil? || attachment.to_s == "null") || account.nil? || badge.nil?)
+      if attachment.content_type && @valid_images.include?(attachment.content_type)
+        account.shard.activate do
+          att = Attachment.create_data_attachment(badge, attachment)
+          badge.image = att
+          badge.save!
+          badge
+        end
+        return true
+      else
+        badge.errors.add(:image, :invalid_format, message: 'invalid image format')
+        badge.destroy if badge.id
+        return false
       end
     end
   end

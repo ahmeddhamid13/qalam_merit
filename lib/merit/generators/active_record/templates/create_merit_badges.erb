@@ -9,7 +9,6 @@ class CreateMeritBadges < ActiveRecord::Migration<%= migration_version %>
       t.string :difficulty
       t.boolean :active, default: true
       t.references :user, limit: 8, foreign_key: true, index: true, null: true
-      t.references :root_account, foreign_key: { to_table: 'accounts'}, limit: 8, null: false, index: true
 
       t.timestamps
     end
