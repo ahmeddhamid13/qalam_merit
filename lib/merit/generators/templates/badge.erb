@@ -11,9 +11,9 @@ class Merit::Badge < ActiveRecord::Base
     self.description = self.description.strip unless self.description.nil?
   end
 
-  validates :name, presence: true, length: { minimum: 3, maximum: 20 }
+  validates :name, presence: true, length: { minimum: 1, maximum: 20 }
   validates :points, presence: true, numericality: true, :inclusion => 1..100
-  validates :description, presence: true, length: { minimum: 3, maximum: 50 }
+  validates :description, presence: true, length: { minimum: 3, maximum: 100 }
 
   has_one :image, :class_name => 'Attachment', :as => :context, :inverse_of => :context, :dependent => :destroy
   belongs_to :created_by, foreign_key: "user_id", class_name: 'User'
@@ -66,7 +66,12 @@ class Merit::Badge < ActiveRecord::Base
     end
 
     def create_with_attachment(account, badge, attachment)
-      return true if ((attachment.nil? || attachment.to_s == "null") || account.nil? || badge.nil?)
+      if ((attachment.nil? || attachment.to_s == "null") || account.nil? || badge.nil?)
+        badge.errors.add(:image, :image_required, message: 'Image Required')
+        badge.destroy if badge.id
+        return false
+      end
+      
       if attachment.content_type && @valid_images.include?(attachment.content_type)
         account.shard.activate do
           att = Attachment.create_data_attachment(badge, attachment)
