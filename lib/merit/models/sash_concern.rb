@@ -26,13 +26,6 @@ module Merit::Models
       end
     end
 
-    ########################QALAM_DEV#########################
-    def add_qalam_badge(badge_id, course_id)
-      bs = Merit::BadgesSash.new(badge_id: badge_id.to_i, course_id: course_id.to_i)
-      badges_sashes << bs
-      bs
-    end
-    ########################END###################################
     # Retrieve the number of points from a category
     # By default all points are summed up
     # @param category [String] The category
@@ -48,10 +41,11 @@ module Merit::Models
     def add_points(num_points, options = {})
       point = Merit::QalamScore::Point.new
       point.num_points = num_points
+      point.course_id = options[:course_id].to_i
       scores
-        .where(category: options[:category] || 'default')
-        .first_or_create
-        .score_points << point
+      .where(category: options[:category] || 'default')
+      .first_or_create
+      .score_points << point
       point
     end
 
