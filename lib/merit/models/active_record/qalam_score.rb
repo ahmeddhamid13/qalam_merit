@@ -23,6 +23,9 @@ module Merit::Models::ActiveRecord
                class_name: 'Merit::ActivityLog',
                as: :related_change
       delegate :sash_id, to: :score
+      belongs_to :course, 
+                  foreign_key: "course_id", 
+                  class_name: 'Course'
     end
   end
 end

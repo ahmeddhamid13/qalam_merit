@@ -12,6 +12,8 @@ module Merit::Models::ActiveRecord
     has_many :badges_sashes, dependent: :destroy
     has_many :badges, through: :badges_sashes, source: :badge
     has_many :scores, dependent: :destroy, class_name: 'Merit::QalamScore'
+    has_many :score_points, through: :scores, source: :badge
+
 
     after_create :create_scores
 
