@@ -10,10 +10,14 @@ module Merit
           inject_into_class(model_path, class_name, "  ### END ###\n\n")
           inject_into_class(model_path, class_name, "  has_many :created_badges, class_name: 'Merit::Badge', :dependent => :destroy\n")
           inject_into_class(model_path, class_name, "  has_many :assigned_badges, through: :sash, source: :badges, :dependent => :destroy\n")
-          inject_into_class(model_path, class_name, "  has_many :badges_sashes, through: :sash, source: :badges_sashes, :dependent => :destroy\n")
           inject_into_class(model_path, class_name, "  belongs_to :sash, foreign_key: 'sash_id', class_name: 'Merit::Sash', :dependent => :destroy\n")
           inject_into_class(model_path, class_name, "  has_merit\n")
           inject_into_class(model_path, class_name, "  ### QALAM_MERIT ###\n")
+
+          inject_into_class(course_path, "Course", "  ### END ###\n\n")
+          inject_into_class(course_path, "Course", "  has_many :badges_sashes, class_name: 'Merit::BadgesSash', dependent: :destroy\n")
+          inject_into_class(course_path, "Course", "  has_many :score_points, class_name: 'Merit::QalamScore::Point', dependent: :destroy\n")
+          inject_into_class(course_path, "Course", "  ### QALAM_MERIT ###\n")
         end
       end
 
@@ -29,6 +33,10 @@ module Merit
 
       def model_path
         @model_path ||= File.join('app', 'models', "#{file_path}.rb")
+      end
+
+      def course_path
+        @course_path ||= File.join('app', 'models', "course.rb")
       end
     end
   end
